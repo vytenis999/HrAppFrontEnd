@@ -1,0 +1,225 @@
+<p-toast></p-toast>
+<button pButton icon="pi pi-arrow-left" class="p-button-raised p-button mb-3" routerLink="/entry/candidate-table"
+        label="Į kandidatų lentelę" (click)="cancelCandidate() "></button>
+<div class="grid">
+  <div class="col-10 md:col-4">
+    <div class="card p-fluid">
+      <!-- Buvo susiekta -->
+      <div class="field">
+        <label class="pb-1" for="email">Kada susiekta su kandidatu?</label>
+        <p-calendar [(ngModel)]="tempWhenWasContacted" placeholder="00/00/0000" [showIcon]="true"
+                    inputId="icon"></p-calendar>
+        <small class="p-invalid" *ngIf="submitted && !tempWhenWasContacted">Privaloma nurodyti šią datą!</small>
+      </div>
+      <!-- LinkedIn URL -->
+      <div class="field">
+        <label class="pb-1" for="email">LinkedIn nuoroda</label>
+          <span class="p-input-icon-left">
+            <i class="pi pi-linkedin" style="color: blue;"></i>
+            <input type="text" pInputText [(ngModel)]="tempLinkedin" (ngModelChange)="fillByLinkedIn(tempLinkedin)" placeholder="Įveskite LinkedIn nuorodą...">
+          </span>
+          <small class="p-invalid" *ngIf="submitted && !tempLinkedin">LinkedIn nuoroda yra privaloma!</small>
+      </div>
+      <!-- First Name -->
+      <div class="field">
+        <label class="pb-1" for="email">Vardas</label>
+        <span class="p-input-icon-left">
+          <i class="pi pi-user"></i>
+          <input type="text" id="name" pInputText placeholder="Įveskite vardą..." [(ngModel)]="tempName" autofocus/>
+        </span>
+        <small class="p-invalid" *ngIf="submitted && !tempName">Vardas yra privalomas!</small>
+      </div>
+      <!-- Last Name -->
+      <div class="field">
+        <label class="pb-1" for="email">Pavardė</label>
+        <span class="p-input-icon-left">
+          <i class="pi pi-user"></i>
+          <input type="text" pInputText placeholder="Įveskite pavardę..." [(ngModel)]="tempSurname" autofocus/>
+        </span>
+        <small class="p-invalid" *ngIf="submitted && !tempSurname">Pavardė yra privaloma!</small>
+      </div>
+      <div class="w-full">
+        <button pButton class="p-button-raised p-button-success mb-2" label="Išsaugoti"
+                (click)="saveCandidate()" [disabled]="!tempLinkedin" ></button>
+      </div>
+    </div>
+  </div>
+  <div class="col-14 md:col-8">
+    <div class="card p-fluid">
+      <p-tabView styleClass="tabview-custom " [scrollable]="true">
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Kontaktai</span>
+          </ng-template>
+          <div class="field">
+            <div class="grid">
+              <div class="col-6">
+                <label class="pb-2" for="email">El.paštas</label>
+                <span class="p-input-icon-left pt-2 pb-2">
+                  <i class="pi pi-at"></i>
+                  <input type="text" id="email" pInputText placeholder="Įveskite el.paštą..." [(ngModel)]="tempEmail" autofocus/>
+                </span>
+              </div>
+              <div class="col-6">
+                <label for="email">Telefono numeris</label>
+                <span class="p-input-icon-left pt-2 pb-2">
+                  <i class="pi pi-phone"></i>
+                  <input type="text" id="phone" pInputText placeholder="Įveskite telefono numerį..." [(ngModel)]="tempPhone" autofocus/>
+                </span>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <!-- Asmenine informacija -->
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Papildoma informacija</span>
+          </ng-template>
+          <div class="field">
+            <div class="grid">
+              <div class="col-6">
+                <label for="email">Pasirinkite kandidato statusą</label>
+                <div class="pt-2 pb-2">
+                  <p-dropdown [options]="statusList" [(ngModel)]="tempStatusId" placeholder="Kandidato statusas"
+                              optionLabel="value" optionValue="id"
+                              [showClear]="true"></p-dropdown>
+                </div>
+
+              </div>
+              <div class="col-6">
+                <label for="email">Įvedamas kitoks statusas (Pasirinkus)</label>
+                <div class="pt-2 pb-2">
+                  <input type="text" pInputText id="otherStatus" [(ngModel)]="tempOtherStatus"
+                         placeholder="Įveskite norimą kandidato statusą" [disabled]="!tempStatusId || tempStatusId!='4'"/>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="grid">
+              <div class="col-6">
+                <label for="email">Kandidato norimas atlyginimas</label>
+                <div class="pt-2 pb-2">
+                  <input  pInputText type="text" id="salary" placeholder="Įveskite atlyginimą..." [(ngModel)]="tempSalary">
+                </div>
+
+              </div>
+              <div class="col-6">
+                <div class="text-center">
+                  <br>
+                  <div class="pt-2 pb-2">
+                    <label for="file-upload" class="custom-file-upload">
+                      <i class="pi pi-cloud-upload"></i> Įkelti CV
+                    </label>
+                    <input id="file-upload" class="form-control" type="file"
+                           (change)="onChange($event)">
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+
+
+        </p-tabPanel>
+        <!-- Technology -->
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Įgūdžiai</span>
+          </ng-template>
+          <div class="field">
+            <label for="email">Pasirinkite technologiją</label>
+            <p-multiSelect
+              name="id"
+              [options]="technologyList"
+              [showToggleAll]="false"
+              [(ngModel)]="tempTechnologies"
+              display="chip"
+              [style]="{width: '50%'}"
+              defaultLabel="Pasirinkti"
+              optionLabel="technologyName">
+            </p-multiSelect>
+          </div>
+          <div class="field">
+            <button pButton [style]="{'width':'50%'}" class="p-button-raised p-button-warning " pRipple
+                    label="Tvarkyti technologijas"
+                    (click)="openTechnologiesDialog() "></button>
+          </div>
+        </p-tabPanel>
+
+        <!-- Comment -->
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Projektas</span>
+          </ng-template>
+          <div class="field">
+            <div class="p-field-checkbox p-col-6">
+              <label for="email">Pridėti prie kliento projekto</label>
+              <div class="pt-2 pb-2">
+                <p-multiSelect
+                  name="id"
+                  [options]="clientList"
+                  [showToggleAll]="false"
+                  [(ngModel)]="tempClients"
+                  display="chip"
+                  [style]="{ width: '50%' }"
+                  [panelStyle]="{ width: '100%' }"
+                  placeholder="Pasirinkti"
+                  optionLabel="name">
+                  <ng-template let-clientList pTemplate="item">
+                    <div class="country-item">
+                      <div>{{clientList.name}}</div>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="email">Komentaras</label>
+            <textarea id="comment" [style]="{'width':'100%', 'height':'185px'}" placeholder="Rašyti..."
+                      pInputTextarea [(ngModel)]="tempComment" rows="3" cols="20"></textarea>
+          </div>
+
+
+        </p-tabPanel>
+        <!-- Dates -->
+        <p-tabPanel>
+          <ng-template pTemplate="header">
+            <span>Planuojama susisiekti</span>
+          </ng-template>
+          <div class="field mt-2">
+            <label for="email">Kada planuojate susisiekti?</label>
+            <p-calendar [style]="{'width':'50%'}" [(ngModel)]="tempWillBeContacted" placeholder="00/00/0000"
+                        [showIcon]="true" inputId="icon"></p-calendar>
+          </div>
+        </p-tabPanel><!-- Dates -->
+      </p-tabView>
+    </div>
+  </div>
+</div>
+
+<p-dialog [(visible)]="technologyDialog" [style]="{width: '400px'}" header="Tvarkyti technologijas" [modal]="true"
+          styleClass="p-fluid">
+  <!-- Add-Delete Technology -->
+  <div class="field">
+      <label for="email">Nauja technologija</label>
+      <div class="pt-1 pb-3">
+        <input type="text" pInputText [(ngModel)]="newTechnology" placeholder="Įvesti technologiją...">
+      </div>
+      <button pButton class="p-button-raised p-button-success " pRipple label="Pridėti"
+              (click)="addTechnology(technology) "></button>
+  </div>
+  <div class="field pb-3">
+    <label for="email">Technologijos pašalinimas</label>
+    <div class="pt-1 pb-3">
+      <p-dropdown appendTo="body" [options]="technologyList" [(ngModel)]="deletedTechnology"
+                  placeholder="Pasirinkite technologiją" optionLabel="technologyName" optionValue="id"
+                  [showClear]="true"></p-dropdown>
+    </div>
+      <button pButton class="p-button-raised p-button-danger " pRipple label="Pašalinti"
+              (click)="deleteTechnology(deletedTechnology) "></button>
+
+  </div>
+  <button pButton class=" p-button-raised p-button-warning " pRipple label="Uždaryti"
+          (click)="closeTechologiesDialog() "></button>
+</p-dialog>

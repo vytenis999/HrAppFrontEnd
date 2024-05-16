@@ -1,0 +1,24 @@
+<p-toast></p-toast>
+<div class="surface-card p-7 shadow-2 border-round min-w-full md:w-6">
+  <button pButton icon="pi pi-arrow-left" class="p-button-raised p-button mb-3" routerLink="/login"></button>
+  <div class="pr-8 pl-8 text-center mb-5">
+    <img src="assets/images/logo_rgb.svg" alt="Image" height="50" class="mb-3">
+  </div>
+
+  <div>
+    <div class="field">
+      <h3>Užmiršote slaptažodį?</h3>
+      <p>Įveskite savo el. pašto adresą ir spauskite atstatyti.</p>
+      <p class="mb-2">Į šį el. paštą nusiųsime instrukcijas kaip atstatyti slaptažodį, jeigu toks el.paštas registruotas.</p>
+      <p-progressSpinner *ngIf="submitted && forgotPassword.email" strokeWidth="2" [style]="{width: '50px', height:'50px'}"></p-progressSpinner>
+      <p-message *ngIf="issuccess" severity="success" text="Laiškas su nuoroda išsiųstas!"></p-message>
+      <p-message *ngIf="isfailure" severity="error" text="{{errormess}}"></p-message>
+      <label for="email" class="block text-900 font-medium mt-2 mb-3">El.paštas</label>
+      <input class="w-full mb-1" [(ngModel)]="forgotPassword.email" id="email" type="email" pInputText>
+      <small class="p-error" *ngIf="submitted && !forgotPassword.email">El.paštas privalomas</small>
+    </div>
+    <button pButton pRipple (click)="onReset()" label="Atstatyti" icon="pi pi-replay" class="w-full p-button-warning"></button>
+  </div>
+</div>
+
+

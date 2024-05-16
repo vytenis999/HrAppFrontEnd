@@ -1,0 +1,17 @@
+
+<div class="card">
+  <div class="bottom-0 left-0 flex  w-full h-3rem">
+    <button name="next" pButton pRipple icon="pi pi-chevron-left" class="p-button-raised p-button-info mr-2 " (click)="prevCalendarPage()"></button>
+    <button pButton pRipple icon="pi pi-calendar" class="p-button-raised p-button-info mr-2" (click)="todayCalendarPage()"></button>
+    <button pButton pRipple icon="pi pi-chevron-right" class="p-button-raised p-button-info mr-2" (click)="nextCalendarPage()"></button>
+    <h1> {{test2}}</h1>
+  </div>
+
+  <full-calendar [options]="calendarOptions" #calendar></full-calendar>
+</div>
+
+
+
+
+
+

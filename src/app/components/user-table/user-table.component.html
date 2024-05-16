@@ -1,0 +1,138 @@
+<p-toast></p-toast>
+
+<div class="card">
+
+  <p-table #dt [value]="users" [rows]="10" [paginator]="true" [globalFilterFields]="['email','role']" [(selection)]="selectedUsers"
+           [rowHover]="true" dataKey="email">
+    <ng-template pTemplate="caption">
+
+        <span class="p-input-icon-left mr-2">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" placeholder="Ieškoti..." (input)="dt.filterGlobal($any($event.target).value,'contains')"/>
+        </span>
+        <button pButton pRipple label="Pridėti" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+        <button pButton pRipple icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length"></button>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="email">El.paštas <p-sortIcon field="email"></p-sortIcon></th>
+        <th pSortableColumn="role">Rolė <p-sortIcon field="role"></p-sortIcon></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>
+          <p-tableCheckbox *ngIf="user.role !== 'SuperAdmin' " [value]="user"></p-tableCheckbox>
+        </td>
+        <td>{{user.email}}</td>
+        <td>{{user.role}}</td>
+        <td class="align-content-end">
+          <button *ngIf="user.role !== 'SuperAdmin' " pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editUser(user)"></button>
+          <button *ngIf="user.role !== 'SuperAdmin' " pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteUser(user)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        Viso yra vartotojų:&nbsp;{{users.length}}
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [(visible)]="userDialog" [style]="{width: '450px'}" header="Naujo vartotojo kūrimas" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="email">El.paštas</label>
+      <input type="email" pInputText id="email" [(ngModel)]="userCreate.email" required autofocus [email]="true"/>
+      <small class="p-error" *ngIf="submitted && !userCreate.email">El.paštas privalomas</small>
+    </div>
+    <div class="field">
+      <label for="password">Slaptažodis</label>
+      <input type="password" pInputText id="password" [(ngModel)]="userCreate.password" required autofocus/>
+      <small class="p-error" *ngIf="submitted && !userCreate.password">Slaptažodis privalomas</small>
+    </div>
+    <div class="field">
+      <label for="confirmPassword">Slaptažodžio patvirtinimas</label>
+      <input type="password" pInputText id="confirmPassword" [(ngModel)]="userCreate.confirmPassword" required autofocus/>
+      <small class="p-error" *ngIf="submitted && !userCreate.confirmPassword">Slaptažodžio patvirtinimas privalomas</small>
+    </div>
+    <div class="field">
+      <label class="mb-3">Rolė</label>
+      <div class="formgrid grid">
+        <div class="p-field-radiobutton col-6">
+          <p-radioButton class="mr-2" id="role1" name="role" value="Admin" [(ngModel)]="userCreate.role"></p-radioButton>
+          <label for="role1">Admin</label>
+        </div>
+        <div class="p-field-radiobutton col-6">
+          <p-radioButton class="mr-2" id="role2" name="role" value="User" [(ngModel)]="userCreate.role"></p-radioButton>
+          <label for="role2">User</label>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="userDialogEdit" [style]="{width: '450px'}" header="Vartotojo duomenų keitimas" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="email">El.paštas</label>
+      <input type="email" pInputText id="emailEdit" [(ngModel)]="user.email" required autofocus [email]="true"/>
+      <small class="p-error" *ngIf="submittedEdit && !user.email">El.paštas privalomas</small>
+    </div>
+    <div class="field max-w-12rem">
+      <label for="passwordChange">Slaptažodis</label>
+      <button pButton id="passwordChange" class="p-button-danger" type="button" icon="pi pi-refresh" label="Keisti slaptažodį" (click)="openNewChangePass(user)"></button>
+    </div>
+    <div class="field">
+      <label class="mb-3">Rolė</label>
+      <div class="formgrid grid">
+        <div class="p-field-radiobutton col-6">
+          <p-radioButton class="mr-2" id="role3" name="role1Edit" value="Admin" [(ngModel)]="user.role"></p-radioButton>
+          <label for="role1">Admin</label>
+        </div>
+        <div class="p-field-radiobutton col-6">
+          <p-radioButton class="mr-2" id="role4" name="role2Edit" value="User" [(ngModel)]="user.role"></p-radioButton>
+          <label for="role2">User</label>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialogEdit()"></button>
+    <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="saveUserEdit()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="userDialogChangePass" [style]="{width: '450px'}" header="Vartotojo slaptažodžio keitimas" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="passwordChange1">Naujas slaptažodis</label>
+      <p-password autocomplete="new-password" id="passwordChange1" [(ngModel)]="tempPass" [feedback]="false" [toggleMask]="true"></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempPass">Įveskite norima keisti slaptažodį!</small>
+    </div>
+    <div class="field">
+      <label for="passwordConfirm1">Slaptažodžio patvirtinimas</label>
+      <p-password autocomplete="new-password" id="passwordConfirm1" [(ngModel)]="tempPassConfirm" [feedback]="false" [toggleMask]="true" required autofocus></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempPassConfirm">Patvirtinkite slaptažodį!</small>
+      <small class="p-error" *ngIf="submittedPass && tempPassConfirm && (tempPass != tempPassConfirm)">Slaptažodžiai nesutampa!</small>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialogChangePass()"></button>
+    <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="savePasswordChange()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

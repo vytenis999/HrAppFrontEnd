@@ -1,0 +1,490 @@
+<p-toast [baseZIndex]="100"></p-toast>
+
+<div class="card">
+    <p-table #dt  [value]="candidates" [paginator]="false"
+    [rows]="10"  [globalFilterFields]="['name','surname']"
+        [(selection)]="selectedCandidates" [rowHover]="true"  dataKey="id"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"  [showCurrentPageReport]="true">
+        <ng-template pTemplate="caption">
+            <p-toolbar>
+                <ng-template pTemplate="left">
+                    <div class="p-d-flex p-ai-center p-jc-between">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" [(ngModel)]="nameFilter" placeholder="Ieškoti..."  (keyup)="triggerSearch()"/>
+                        </span>
+                    </div>
+                    <a href="../../entry/add-candidate" class="new-candidate no-underline ">
+                        <button pButton pRipple label="Naujas" icon="pi pi-plus" class="p-button-success  ml-3"></button>
+                    </a>
+                    <button pButton pRipple label="Ištrinti" icon="pi pi-trash" class="p-button-danger ml-1" *ngIf="role != 'User'" (click)="deleteSelectedCandidates()" [disabled]="!selectedCandidates || !selectedCandidates.length"></button>
+                    <button pButton pRipple label="Darbo pasiūlymas" icon="pi pi-file" class="p-button-info ml-1" (click)="downloadFile()" [disabled]="!selectedCandidates || !selectedCandidates.length"></button>
+
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <p-fileUpload  name="files[]" chooseLabel="Importuoti" accept=".xlsx" (onUpload)="onUpload($event)" url={{excelUrl}} [auto]="true" [disabled]="totalInDataBase>=120">
+                    </p-fileUpload>
+                    <button pButton pRipple label="Eksportuoti" icon="pi pi-download" style="background-color: #22c55e; border:none !important;" class="p-button-info" (click)="downloadCandidateExcel()"></button>
+                </ng-template>
+            </p-toolbar>
+        </ng-template>
+
+        <!-- Headers -->
+        <ng-template pTemplate="header">
+            <tr>
+                <th >
+                    <div class="flex justify-content-center align-items-center">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </div>
+                </th>
+
+                <th id="Vardas" style="cursor: pointer;" (click)="sortName(1)">
+                    <div class="flex justify-content-center align-items-center">
+                        <p > Vardas</p>
+                        <i id="sortName"  class="ml-2 pi pi-sort-alt" ></i>
+                    </div>
+                </th>
+
+                <th (click)="sortSurname(1)" style="cursor: pointer;">
+                    <div class="flex justify-content-center align-items-center">
+                        <p id="Pavardė"> Pavardė</p>
+                        <i id="sortSurname"  class="ml-2 pi pi-sort-alt" ></i>
+                    </div>
+                </th>
+
+                <th>
+                    <div class="flex justify-content-center align-items-center">
+                            Technologija
+                        <p-columnFilter field="technologies" matchMode="in" display="menu" [showMatchModes]="false"
+                            [showOperator]="false" [showAddButton]="false" [showApplyButton]="false" [showClearButton]="false">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-multiSelect [ngModel]="filterTechnologyList" [options]="technologyList" placeholder="Any"
+                                    (onChange)="getFilterTechnology($event.value,1)" optionLabel="technologyName" optionValue="id" [style]="{ width: '250px' }">
+                                    <ng-template let-option pTemplate="item">
+                                        <div class="p-multiselect-technologies-option">
+                                                <span class="p-ml-1" >{{option.technologyName}}</span>
+                                        </div>
+                                    </ng-template>
+                                </p-multiSelect>
+                                <div class="p-column-filter-buttonbar ng-tns-c115-5 ng-star-inserted" >
+                                    <p-button label="Išvalyti" styleClass="p-element p-button-outlined p-button-sm ng-tns-c115-5 p-button p-component ng-star-inserted"  (onClick)="clearFilterTech()"></p-button>
+                                </div>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+
+                <th pColumn="comment"> <div class="flex justify-content-center align-items-center"> Komentaras</div></th>
+
+                <th>
+                    <div class="flex align-items-center">
+                        <div style="cursor: pointer;" (click)="sortWhenWasContacted(1)" class="flex justify-content-center align-items-center mr-2">
+                            <p id="Paskutinis_susitikimas" class=""> Paskutinis susitikimas</p>
+                            <i id="sortWhenWasContacted"  class="ml-2 pi pi-sort-alt" ></i>
+                        </div>
+                        <p-columnFilter display="menu" [showMatchModes]="false"
+                            [showOperator]="false" [showAddButton]="false" [showApplyButton]="false" [showClearButton]="false">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <div class="align-items-center">
+                                    <div class="flex">
+                                        <div class=" m-1">
+                                            <label>Nuo</label>
+                                            <p-calendar inputId="basic" [(ngModel)]="startDate"></p-calendar>
+                                        </div>
+    
+                                        <div class="m-1">
+                                            <label for="">Iki</label>
+                                            <p-calendar inputId="basic" [(ngModel)]="endDate"></p-calendar>
+                                        </div>
+                                    </div>
+                                   <div class="flex">       
+                                            <button pButton pRipple type="button" label="Išvalyti" style="max-width:150px;" class="p-button-outlined p-button-danger m-1  mr-5" (click)="clearFilterDate()" ></button>                                           
+                                            <button pButton pRipple type="button" label="Filtruoti" style="max-width:150px;" class="p-button-outlined p-button-success m-1 ml-5" (click)="getFilterDate(1)" [disabled]="!startDate || !endDate"></button>
+                                    </div>
+                                </div>                                
+                            </ng-template>
+                    </p-columnFilter>
+                    </div>                    
+                </th>
+
+                <th style="cursor: pointer;" (click)="sortWillBeContacted(1)">
+                    <div class="flex justify-content-center align-items-center">
+                        <p id=" Reikia_susisiekti" class="">  Reikia susisiekti</p>
+                        <i id="sortWillBeContacted"  class="ml-2 pi pi-sort-alt" ></i>
+                    </div>
+                </th>
+
+                <th style="width: 100px !important;">
+                    <div class="flex justify-content-center align-items-center">
+                        <p-columnFilter field="statusId" matchMode="equals" [showMenu]="false" >
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-dropdown [ngModel]="filterStatus"  [options]="statusList" optionLabel="value" optionValue="id" (onChange)="getFilterStatus($event.value,1)"
+                                    placeholder="Any"  [showClear]="true">
+                                    <ng-template let-option pTemplate="item">
+                                        <span >
+                                            {{option.value}}
+                                        </span>
+
+                                    </ng-template>
+                                </p-dropdown>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </ng-template>
+
+        <!-- Body -->
+        <ng-template pTemplate="body" let-AddOrEditCandidate>
+            <tr>
+                <td >
+                    <div class="flex justify-content-center align-items-center">
+                        <p-tableCheckbox [value]="AddOrEditCandidate"></p-tableCheckbox>
+                    </div>
+                </td>
+
+                <!-- Name -->
+                <td id="firstName">
+                    <div class="flex justify-content-center align-items-center">{{AddOrEditCandidate.name}}</div>
+                </td>
+                <!-- Surname -->
+                <td id="lastName">
+                    <div class="flex justify-content-center align-items-center">{{AddOrEditCandidate.surname}}</div>
+                </td>
+                <!-- technology -->
+                <td>
+                    <div class="flex justify-content-center align-items-center">
+                        <span *ngIf="AddOrEditCandidate.technologies.length<4">
+                             <span *ngFor="let item of AddOrEditCandidate.technologies" >{{item.technologyName}} &nbsp;</span>
+                        </span>
+                        <span *ngIf="AddOrEditCandidate.technologies.length>=4">
+                            {{AddOrEditCandidate.technologies[0].technologyName}}
+                            {{AddOrEditCandidate.technologies[1].technologyName}}
+                            {{AddOrEditCandidate.technologies[2].technologyName}}
+                            <i class="pi pi-ellipsis-h" style="cursor: pointer;" (click)="showMoreTech(AddOrEditCandidate)"></i>
+                        </span>
+                    </div>
+
+                </td>
+                <!-- Comment -->
+                <td>
+                    <span *ngIf="AddOrEditCandidate.comment!=null">
+                        <span *ngIf=" AddOrEditCandidate.comment.length>=150">
+                            <div class="flex justify-content-start align-items-start overflow-hidden" style="max-width: 300px; max-height:200px;">{{AddOrEditCandidate.comment.substring(0,150)}}</div>
+                        </span>
+                        <span *ngIf="AddOrEditCandidate.comment.length<150">
+                            <div class="flex justify-content-start align-items-start overflow-hidden" style="max-width: 300px; max-height:200px;">{{AddOrEditCandidate.comment}}</div>
+                        </span>
+                    </span>
+                    <span *ngIf="AddOrEditCandidate.comment==null"></span>
+                   
+                </td>
+                <!-- First Contact -->
+                <td>
+                    <div class="flex justify-content-center align-items-center">{{AddOrEditCandidate.whenWasContacted[AddOrEditCandidate.whenWasContacted.length-1]}}</div>
+                </td>
+                <!-- Next Contact -->
+                <td>
+                    <div class="flex justify-content-center align-items-center">{{AddOrEditCandidate.willBeContacted}}</div>
+                </td>
+
+                <td class="text-center">
+                    <div class="flex justify-content-center align-items-center">
+                        <span *ngIf="AddOrEditCandidate.statusId==1">
+                            <i  class="pi pi-check-circle" id="available" title="Open for Offers" style="color: green;font-size: 1.4rem ;"></i>
+                        </span>
+                        <span *ngIf="AddOrEditCandidate.statusId==3">
+                           <i class="pi pi-times"  id="not_available" title="Closed for Offers" style="color: red;font-size: 1.4rem ;"></i>
+                        </span>
+                        <span *ngIf="AddOrEditCandidate.statusId==2">
+                            <i class="pi pi-exclamation-circle"  id="employed" title="Allready Employed" style="color:rgb(190, 188, 12);font-size: 1.4rem ;"></i>
+                        </span>
+                        <span *ngIf="AddOrEditCandidate.statusId==4">
+                            {{AddOrEditCandidate.otherStatus}}
+                        </span>
+                    </div>
+                </td>
+
+                <!-- Icons -->
+                <td>
+                    <div class="flex justify-content-center align-items-center">
+                        <a href="{{AddOrEditCandidate.linkedin}}" target="_blank" title="View Candidate LinkedIn" class="linkedInUrl">
+                            <i class="pi pi-linkedin " style="color:blue ;font-size: 1.6rem;"></i>
+                        </a>
+
+                    </div>
+                </td>
+
+                <td>
+                    <button pButton pRipple icon="pi pi-search" class="p-button-rounded p-button-success p-mr-2 m-1" (click)="editCandidate(AddOrEditCandidate)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger m-1" *ngIf="role != 'User'" (click)="deleteCandidate(AddOrEditCandidate)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex " style="width: 200px !important; ">
+                <button (click)="First()" type="button" pripple="" style="color:#6c757d !important;" class="m-1 p-ripple p-element p-paginator-prev p-paginator-element p-link"><span class="p-paginator-icon pi pi-angle-double-left"></span><span class="p-ink"></span></button>
+
+                <button (click)="Down(currentPage)" type="button" pripple="" style="color:#6c757d !important;" class="p-ripple p-element p-paginator-prev p-paginator-element p-link"><span class="p-paginator-icon pi pi-angle-left"></span><span class="p-ink"></span></button>
+                <div style="color:#6c757d !important;" class="flex align-items-center justify-content-center  border-round m-2">
+                    <p>{{currentPage}} of {{pages}}</p>
+                </div>
+                <button (click)="Up(currentPage)" type="button" pripple=""  style="color:#6c757d !important;" class="p-ripple p-element p-paginator-next p-paginator-element p-link"><span class="p-paginator-icon pi pi-angle-right"></span><span class="p-ink"></span></button>
+                <button (click)="Last()" type="button" pripple="" style="color:#6c757d !important;" class="m-1 p-ripple p-element p-paginator-prev p-paginator-element p-link"><span class="p-paginator-icon pi pi-angle-double-right"></span><span class="p-ink"></span></button>
+
+            </div>
+                <div class="p-d-flex p-ai-center p-jc-between" style="color:#6c757d !important; font-size: 0.8rem;">
+                    Is viso yra {{ totalInDataBase }} Kandidatų.
+                 </div>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<p-dialog [(visible)]="candidateDialog" [style]="{width: '55%'}" [style]="{height:'75%'}" header="Kadidato duomenų atnaujinimas" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <div class="information_form  w-30rem m-4 p-3 " style="width: 95% !important;">
+            <p-tabView  styleClass="tabview-custom " [scrollable]="true"  [style]="{'width':'100%'}">
+                <p-tabPanel>
+                    <ng-template pTemplate="header">
+                        <span>Asmeninė</span>
+                    </ng-template>
+                        <div class="grid">
+                            <div class="field col ">
+                                <!-- LinkedIn -->
+                                <label >LinkedIn</label>
+                                <span class="p-input-icon-left">
+
+                                    <i class="pi pi-linkedin" style="color: blue;"></i>
+                                    <input type="text" pInputText [(ngModel)]="AddOrEditCandidate.linkedin" placeholder="LinkedIn">
+                                </span>
+
+                                <!-- First Name -->
+                                <label >Vardas</label>
+                                <span class="p-input-icon-left m-1 ">
+                                    <i class="pi pi-user"></i>
+                                    <input type="text" id="name" pInputText placeholder="Vardas" [(ngModel)]="AddOrEditCandidate.name" required autofocus/>
+                                    <small class="p-invalid" *ngIf="submitted && !AddOrEditCandidate.name">First name is required.</small>
+                                </span>
+
+                                <!-- Last Name -->
+                                <label >Pavardė</label>
+                                <span class="p-input-icon-left m-1">
+                                    <i class="pi pi-user"></i>
+                                    <input type="text"  pInputText placeholder="Pavarde" [(ngModel)]="AddOrEditCandidate.surname" required autofocus/>
+                                    <small class="p-invalid" *ngIf="submitted && !AddOrEditCandidate.surname">First name is required.</small>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Recruiter -->
+                        <div class="m-1 " style="color:#6c757d; font-size:0.8rem;">
+                            <label >Pridėjo:</label>
+                            <span *ngIf="AddOrEditCandidate.recruiter!=null"> {{AddOrEditCandidate.recruiter}}</span>
+                            <span *ngIf="AddOrEditCandidate.recruiter==null"> Nežinoma</span>
+                        </div><!-- Recruiter -->
+                    <!-- Personal -->
+
+                </p-tabPanel>
+                <!-- Kontaktai -->
+                <p-tabPanel >
+                    <ng-template pTemplate="header">
+                          <span>Kontaktai</span>
+                    </ng-template>
+                    <div class="field col">
+                        <!-- email -->
+                        <label >Paštas</label>
+                        <span class="p-input-icon-left m-1">
+                            <i class="pi pi-at"></i>
+                            <input type="text" id="email" pInputText placeholder="Elektroninis paštas" [(ngModel)]="AddOrEditCandidate.email"  autofocus/>
+
+                        </span>
+                        <!-- phone -->
+                        <label >Telefonas</label>
+                        <span class="p-input-icon-left m-1">
+                            <i class="pi pi-phone"></i>
+                            <input type="text" id="phone" pInputText placeholder="Telefonas" [(ngModel)]="AddOrEditCandidate.phone"  autofocus/>
+
+                        </span>
+                    </div>
+                </p-tabPanel>
+                <!-- Papildoma -->
+                <p-tabPanel >
+                    <ng-template pTemplate="header">
+                            <span>Papildoma</span>
+                    </ng-template>
+                    <div class="field col">
+                        <!-- Status -->
+                        <div class="Status formgrid grid w-full ">
+
+                            <div class="field col m-1">
+                                <label >Statusas</label>
+                                <p-dropdown [options]="statusList" [(ngModel)]="AddOrEditCandidate.statusId" placeholder="Pasirinkite statusą" optionLabel="value" optionValue="id"
+                                        [showClear]="true"></p-dropdown>
+                            </div>
+                            <div class="field col m-1">
+                                <label >Kitas statutas</label>
+                                <input type="text" pInputText id="otherStatus" [(ngModel)]="AddOrEditCandidate.otherStatus" placeholder="Kitas Statusas" [disabled]="!AddOrEditCandidate.statusId || AddOrEditCandidate.statusId!=4" />
+                            </div>
+                        </div><!-- Status -->
+                        <div class="grid w-full">
+                            <!-- Salary -->
+                            <div class="field col m-1">
+                                <label >Atlyginimas</label>
+                                <input pInputText  type="number"  id="salary" placeholder="Atlyginimas" [(ngModel)]="AddOrEditCandidate.salary">
+                            </div>
+                            <!-- CV -->
+                            <div class="field col m-1 grid">
+
+                                <div class="field col  m-1 mt-1">
+                                    <label >Įkelti CV</label>
+                                    <div class="text-center">
+
+                                        <label for="file-upload" class="custom-file-upload">
+                                        <i class="pi pi-cloud-upload"></i> Įkelti CV
+                                        </label>
+                                        <input id="file-upload" class="form-control" type="file"
+                                                (change)="onChange($event)">
+                                    </div>
+                                    </div>
+
+                                <div class="field col m-1">
+                                    <label for="CV">Parsisiųsti CV</label>
+                                    <button pButton pRipple label="Parsisiųsti" icon="pi pi-download" style="background-color: #22c55e; border:none !important;" class="p-button-info" (click)="downloadFileCV()"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-tabPanel>
+
+                <!-- Technology -->
+                <p-tabPanel >
+                  <ng-template pTemplate="header">
+                        <span>Įgūdžiai</span>
+                  </ng-template>
+
+                    <div class="field w-10  p-2 mb-6">
+                        <label >Technologija</label>
+                        <div class="field-checkbox p-col-6 mg-5 " >
+                                <p-multiSelect
+                                name="id"
+                                appendTo="body"
+                                [options]="technologyList"
+                                [showToggleAll]="false"
+                                [(ngModel)]="AddOrEditCandidate.technologies"
+                                display="chip"
+                                [style]="{ width: '400px' }"
+                                defaultLabel="Pasirinkite technologiją"
+                                optionLabel="technologyName">
+                                </p-multiSelect>
+                        </div>
+                    </div>
+                </p-tabPanel>
+
+                <!-- Comment -->
+
+                <p-tabPanel header="Header II">
+                  <ng-template pTemplate="header">
+                    <span>Projektas</span>
+                  </ng-template>
+
+                    <!-- Client -->
+                    <div class="field m-1 mb-2">
+                        <div class="p-field-checkbox p-col-6">
+                            <label >Klientas</label>
+                            <p-multiSelect
+                                name="id"
+                                [options]="clientList"
+                                [showToggleAll]="false"
+                                [(ngModel)]="AddOrEditCandidate.clients"
+                                display="chip"
+                                [style]="{ width: '500px' }"
+                                [panelStyle]="{ width: '100%' }"
+                                placeholder="Pridėkite klientą"
+                                optionLabel="name">
+                                <ng-template let-clientList pTemplate="item">
+                                    <div class="country-item">
+                                        <div>{{clientList.name}}</div>
+                                    </div>
+                                </ng-template>
+                            </p-multiSelect>
+                        </div>
+                    </div> <!-- Client -->
+
+                    <div class="field m-1 grid">
+                        <textarea  id="comment" [style]="{'width':'500px', 'height':'150px'}" placeholder="Parašykite komentarą" pInputTextarea [(ngModel)]="AddOrEditCandidate.comment" required rows="3" cols="20"></textarea>
+                    </div>
+                </p-tabPanel> <!-- Comment -->
+
+                <!-- Dates -->
+                <p-tabPanel header="Header III" >
+                    <ng-template pTemplate="header">
+                        <span style="display:inline-block;overflow: hidden;white-space:nowrap;">Buvo Susisiekta</span>
+                    </ng-template>
+                    <div class="p-field p-2">
+                        <div class="p-field p-col-12 p-md-4">
+                            <div class="" style="width:100% !important;">
+                                <label >Pridėti buvusį susitikimą</label>
+                                <p-calendar appendTo="body"  [(ngModel)]="whenWasContactedDate" placeholder="Buvo susisiekta" [showIcon]="true" inputId="icon" ></p-calendar>
+                            </div>
+
+                            <div class="dates-history" class="mt-3" style="width: 100% !important;">
+                                <label for="">Susisiekimų istorija</label>
+                                <p-timeline layout="horizontal"  class="p-2" [value]="AddOrEditCandidate.whenWasContacted" >
+                                <ng-template pTemplate="content" let-event>
+                                    <small class="p-text-secondary">{{event}}</small>
+                                </ng-template>
+                                </p-timeline>
+                            </div>
+                        </div>
+                    </div>
+                </p-tabPanel><!-- Dates -->
+
+                <!-- Dates -->
+                <p-tabPanel header="Header III">
+                    <ng-template pTemplate="header">
+                      <span style="display:inline-block;overflow: hidden;white-space:nowrap;">Planuojama Susisiekti</span>
+                    </ng-template>
+                      <div class="p-field p-2">
+                          <div class="p-field p-col-12 p-md-4">
+                              <label >Planuojama Susisiekti</label>
+                              <p-calendar appendTo="body"  [(ngModel)]="willBeContactedDate"  placeholder="Ketinama susisiekti" [showIcon]="true" inputId="icon" dataFormat="yy.mm.dd" ></p-calendar>
+                          </div>
+                      </div>
+                </p-tabPanel><!-- Dates -->
+
+            </p-tabView>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="updateCandidate()"></button>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog [(visible)]="candidateTechnologyDialog" [style]="{width: '500px','max-height': '25rem'}" header="Visos kandidato technologijos" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <!-- <span *ngFor="let item of AddOrEditCandidate.technologies" >{{item.technologyName}} &nbsp;</span> -->
+        <p-table [value]="AddOrEditCandidate.technologies"  [tableStyle]="{'max-width': '25rem'}">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Technologijų sąrašas</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-product>
+                <tr>
+                    <td>{{product.technologyName}}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideTechnologyDialog()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

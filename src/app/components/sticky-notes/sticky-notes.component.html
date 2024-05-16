@@ -1,0 +1,163 @@
+<p-toast></p-toast>
+<div class="center">
+    <p-button [disabled]="isPrivate" (onClick)="displayPrivate()">Privatus</p-button>&nbsp;&nbsp;
+    <p-button [disabled]="!isPrivate" (onClick)="displayPublic()">Bendras</p-button>
+  </div>
+<p-button (onClick)="showCategoryDialog()"> + pridėti </p-button>
+<br><br>
+<div cdkDropListGroup>
+<div  class="card example-container" *ngFor="let category of listCategories">
+   <h2 style="text-align: center; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" [style]="{'background-color': category.color}" (dblclick)="showCategoryUpdateDialog(category)" >{{category.title}}</h2>
+        <div
+      cdkDropList
+      [cdkDropListData]="listNotes"
+      class="example-list"
+      (cdkDropListDropped)="drop($event, category)">
+      <div *ngFor="let note of listNotes">
+        <div class="example-list" *ngIf="isEqual(category.id,note.categoryId)">
+      <div class="example-box" [style]="{'background-color': note.color}" (dblclick)="showNoteUpdateDialog(note)" cdkDrag [cdkDragData]="note">{{note.content}}</div>
+      </div>
+    </div>
+        <div (click)="showNoteDialog(category.id)" style="min-height: 60px;
+        background: rgb(59, 130, 246);
+        border-radius: 4px;
+        overflow: hidden;
+        text-align: center;
+        padding: 20px 10px;
+        bottom: 0;
+        cursor: pointer;
+        color: rgb(255, 255, 255);">
+            Pridėti
+        </div>
+    </div>
+
+</div>
+</div>
+<p-dialog header="Title" [(visible)]="displayCategory" (onHide)="dialogHide()">
+    <ng-template pTemplate="header">
+        Pridėti naują kategorija.
+    </ng-template>
+    <textarea [(ngModel)]="addedNote" rows="4" cols="50"></textarea><br><br>
+    <div class="center">
+    <input type="radio" name="color" id="red" value="#fef2f2" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="red"><span class="red"></span></label>
+
+    <input type="radio" name="color" id="green" value="#f0fdf4" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="green"><span class="green"></span></label>
+
+    <input type="radio" name="color" id="yellow" value="#fefce8" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="yellow"><span class="yellow"></span></label>
+
+    <input type="radio" name="color" id="blue" value="#eff6ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="blue"><span class="blue"></span></label>
+
+    <input type="radio" name="color" id="purple" value="#faf5ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="purple"><span class="purple"></span></label>
+</div>
+    <ng-template pTemplate="footer">
+       <p-button (onClick)="addNewCategory()" type="submit" >Išsaugoti</p-button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog header="Title" [(visible)]="displayNote" (onHide)="dialogHide()">
+    <ng-template pTemplate="header">
+        Pridėti naują note.
+    </ng-template>
+    <textarea [(ngModel)]="addedNote" rows="4" cols="50"></textarea><br><br>
+    <div class="center">
+    <input type="radio" name="color" id="red" value="#fef2f2" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="red"><span class="red"></span></label>
+
+    <input type="radio" name="color" id="green" value="#f0fdf4" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="green"><span class="green"></span></label>
+
+    <input type="radio" name="color" id="yellow" value="#fefce8" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="yellow"><span class="yellow"></span></label>
+
+    <input type="radio" name="color" id="blue" value="#eff6ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="blue"><span class="blue"></span></label>
+
+    <input type="radio" name="color" id="purple" value="#faf5ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="purple"><span class="purple"></span></label>
+</div>
+    <ng-template pTemplate="footer">
+       <p-button (onClick)="addNewNote()">Išsaugoti</p-button>
+    </ng-template>
+
+</p-dialog>
+
+<p-dialog header="Title" [(visible)]="displayCategoryUpdate" (onHide)="dialogHide()">
+    <ng-template pTemplate="header">
+        Atnaujinti kategorija.
+    </ng-template>
+    <textarea [(ngModel)]="addedNote" rows="4" cols="50"></textarea><br><br>
+    <div class="center">
+    <input type="radio" name="color" id="red" value="#fef2f2" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="red"><span class="red"></span></label>
+
+    <input type="radio" name="color" id="green" value="#f0fdf4" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="green"><span class="green"></span></label>
+
+    <input type="radio" name="color" id="yellow" value="#fefce8" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="yellow"><span class="yellow"></span></label>
+
+    <input type="radio" name="color" id="blue" value="#eff6ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="blue"><span class="blue"></span></label>
+
+    <input type="radio" name="color" id="purple" value="#faf5ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="purple"><span class="purple"></span></label>
+</div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Ištrinti" icon="pi pi-trash" class="p-button-danger m-1" (click)="deleteCategory()"></button>
+       <p-button (onClick)="updateCategory()">Išsaugoti</p-button>
+    </ng-template>
+
+</p-dialog>
+<p-dialog header="Title" [(visible)]="displayNoteUpdate" (onHide)="dialogHide()">
+    <ng-template pTemplate="header">
+        Atnaujinti note.
+    </ng-template>
+    <textarea [(ngModel)]="addedNote" rows="4" cols="50"></textarea><br><br>
+    <div class="center">
+    <input type="radio" name="color" id="red" value="#fef2f2"  [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="red"><span class="red"></span></label>
+
+    <input type="radio" name="color" id="green" value="#f0fdf4" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="green"><span class="green"></span></label>
+
+    <input type="radio" name="color" id="yellow" value="#fefce8" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="yellow"><span class="yellow"></span></label>
+
+    <input type="radio" name="color" id="blue" value="#eff6ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="blue"><span class="blue"></span></label>
+
+    <input type="radio" name="color" id="purple" value="#faf5ff" [(ngModel)]="selectedValue"
+    (change)="onItemChange($event)"/>
+    <label for="purple"><span class="purple"></span></label>
+</div>
+    <ng-template pTemplate="footer">
+        <button  pButton pRipple label="Ištrinti" icon="pi pi-trash" class="p-button-danger m-1" (click)="deleteNote()"></button>
+       <p-button label="Išsaugoti" (onClick)="updateNote()"></p-button>
+    </ng-template>
+
+</p-dialog>

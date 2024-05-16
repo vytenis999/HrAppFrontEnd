@@ -1,0 +1,191 @@
+<!--<p-toast></p-toast>-->
+<div class="grid">
+  <div class="col-12 md:col-6">
+    <div class="card ">
+
+      <div class="grid">
+        <div class="col">
+          <div class="field mb-5">
+                  <span class="p-input-icon-left">
+                      <i class="pi pi-euro"></i>
+                      <input type="text" pInputText id="surname" name="day" [(ngModel)]="salary" id="salary"
+                             placeholder="Alga" required autofocus/>
+                  </span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field mb-4">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-phone"></i>
+                        <p-dropdown [style]="{'minWidth':'100%'}" [options]="dates" [(ngModel)]="selectedDate"
+                                    optionLabel="name" optionValue="value"></p-dropdown>
+                    </span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="formgroup-inline mb-4">
+        <div class="field-radiobutton">
+          <p-radioButton name="city" value="1" [(ngModel)]="salary_type" inputId="city1"></p-radioButton>
+          <label for="city2">Ant popieriaus</label>
+        </div>
+        <div class="field-radiobutton">
+          <p-radioButton name="city" value="2" [(ngModel)]="salary_type" inputId="city2"></p-radioButton>
+          <label for="city2">Į rankas</label>
+        </div>
+      </div>
+
+
+      <div class="formgroup-inline mb-4">
+        <div class="field-radiobutton">
+          <p-radioButton name="NPD" value="1" [(ngModel)]="npd" inputId="npd1"></p-radioButton>
+          <label for="npd1">Paskaičiuos sistema</label>
+        </div>
+        <div class="field-radiobutton">
+          <p-radioButton name="NPD" value="2" [(ngModel)]="npd" inputId="npd2"></p-radioButton>
+          <label for="npd2">Nurodysiu pats</label>
+        </div>
+      </div>
+
+
+      <div class="field mb-4" [hidden]="npd=='1'">
+                  <span class="p-input-icon-left">
+                      <i class="pi pi-euro"></i>
+                      <input type="text" pInputText id="surname" name="day" [(ngModel)]="npd_pats" id="npd_pats"
+                             placeholder="Nurodytas npd" required autofocus/>
+                    <!-- <small class="p-invalid" *ngIf="submitted && !tempName">First name is required.</small> -->
+                  </span>
+      </div>
+
+
+      <div class="formgroup-inline">
+        <div class="field-checkbox">
+          <p-checkbox name="check" [(ngModel)]="checkboxValue" [binary]="true"></p-checkbox>
+          <label for="check">Papildomai kaupiu pensijai</label>
+        </div>
+      </div>
+
+
+      <div class="field" [hidden]="!checkboxValue">
+              <span class="p-input-icon-left">
+                  <i class="pi pi-euro"></i>
+                  <input type="text" placeholder="Pensijos kiekis 0.027" pInputText id="surname" name="day"
+                         [(ngModel)]="pensija_kiekis" id="pensija_kiekis" required autofocus/>
+                <!-- <small class="p-invalid" *ngIf="submitted && !tempName">First name is required.</small> -->
+              </span>
+      </div>
+
+
+      <button pButton pRipple label="Tikrinti" class="p-button-raised p-button-success " [style]="{'Width':'100%'}"
+              (click)="getTax()"></button>
+
+
+    </div>
+  </div>
+  <div class="col-12 md:col-6">
+    <div class="card">
+      <ul _ngcontent-kvg-c87="" class="list-none p-0 m-0">
+        <li _ngcontent-kvg-c87=""
+            class="p-3 mb-3 flex align-items-center justify-content-between cursor-pointer border-round bg-indigo-50 text-indigo-900">
+          <div _ngcontent-kvg-c87="" class="flex align-items-center"><i _ngcontent-kvg-c87=""
+                                                                        class="pi pi-copy text-2xl mr-3">
+          </i><span _ngcontent-kvg-c87="" class="ext-lg font-medium">Ant popieriaus</span>
+          </div>
+          <span _ngcontent-kvg-c87="" class="text-lg font-bold">{{ant_pop_x}}&nbsp;<i class="pi pi-euro"></i></span>
+        </li>
+        <li _ngcontent-kvg-c87=""
+            class="p-3 mb-3 flex align-items-center justify-content-between cursor-pointer border-round bg-purple-50 text-purple-900">
+          <div _ngcontent-kvg-c87="" class="flex align-items-center"><i _ngcontent-kvg-c87=""
+                                                                        class="pi pi-briefcase text-2xl mr-3">
+
+          </i><span _ngcontent-kvg-c87="" class="ext-lg font-medium">Darbo vietos kaina</span>
+          </div>
+          <span _ngcontent-kvg-c87="" class="text-lg font-bold">{{darb_kaina}}&nbsp;<i class="pi pi-euro"></i></span>
+        </li>
+        <li _ngcontent-kvg-c87=""
+            class="p-3 flex align-items-center justify-content-between cursor-pointer border-round bg-teal-50 text-teal-900">
+          <div _ngcontent-kvg-c87="" class="flex align-items-center"><i _ngcontent-kvg-c87=""
+                                                                        class="pi pi-wallet text-2xl mr-3">
+
+          </i><span _ngcontent-kvg-c87="" class="ext-lg font-medium">Į rankas</span>
+          </div>
+          <span _ngcontent-kvg-c87="" class="text-lg font-bold">{{i_rankas_x}}&nbsp;<i class="pi pi-euro"></i></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- Personal -->
+<!--
+<div class="flex">
+  <div class="flex font-bold text-center  p-4 border-round mb-3">
+
+    <div class="personal block text-center p-4 mb-6">
+
+      <div class="p-field">
+        <label for="name">Alga</label>
+        <input type="text" pInputText id="surname" name="day" [(ngModel)]="salary" id="salary" required autofocus />
+
+      </div>
+
+
+
+
+
+
+      <div class="field-radiobutton">
+        <p-radioButton name="city" value="1" [(ngModel)]="salary_type" inputId="city1"></p-radioButton>
+        <label for="city1">Ant popieriaus</label>
+      </div>
+      <div class="field-radiobutton">
+        <p-radioButton name="city" value="2" [(ngModel)]="salary_type" inputId="city2"></p-radioButton>
+        <label for="city2">Į rankas</label>
+      </div>
+
+
+      <p-dropdown [options]="dates" [(ngModel)]="selectedDate" optionLabel="name" optionValue="value"></p-dropdown>
+
+      <div>kaip skaičiuoti npd</div>
+
+
+
+      <div class="field-radiobutton">
+        <p-radioButton name="NPD" value="1" [(ngModel)]="npd" inputId="npd1"></p-radioButton>
+        <label for="npd1">Paskaičiuos sistema</label>
+      </div>
+      <div class="field-radiobutton">
+        <p-radioButton name="NPD" value="2" [(ngModel)]="npd" inputId="npd2"></p-radioButton>
+        <label for="npd2">Nurodysiu pats</label>
+      </div>
+
+      <div class="p-field" [hidden]="npd=='1'">
+        <label for="name">Taikomas npd</label>
+        <input type="text" pInputText id="surname" name="day" [(ngModel)]="npd_pats" id="npd_pats" required autofocus />
+      </div>
+      <div>
+        <p-checkbox name="check" [(ngModel)]="checkboxValue" [binary]="true"></p-checkbox>
+        <label for="check">Papildomai kaupiu pensijai</label>
+      </div>
+
+      <div class="p-field" [hidden]="!checkboxValue">
+        <label for="name">Pensijos procentas</label>
+        <input type="text" placeholder="0.027" pInputText id="surname" name="day" [(ngModel)]="pensija_kiekis" id="pensija_kiekis" required autofocus />
+
+      </div>
+
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text p-4 m-10" (click)="getTax()"></button>
+
+      <div> Ant popieriaus {{ant_pop_x}}</div>
+      <div> Darbo kaina {{darb_kaina}}</div>
+      <div> I rankas {{i_rankas_x}}</div>
+
+    </div>
+    <div class="menu-tabs"></div>
+  </div>
+
+</div> -->
+
+

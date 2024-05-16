@@ -1,0 +1,68 @@
+<!--<p-menubar [model]="items" [style]="{'position': 'fixed', 'margin':'0 auto', 'width': '100%', 'z-index': '2100'}" (click) = "activeMenu($event)">-->
+<!--  <ng-template pTemplate="start">-->
+<!--    <div class="noselect p-1 border-round-sm mr-3 lg:mr-6"><img src="assets/images/logo_fav-ic.png" height="40" class="" alt="Logo Xplicity"></div>-->
+<!--  </ng-template>-->
+<!--  <ng-template pTemplate="end">-->
+<!--    <div class="relative" style="float: right;">-->
+<!--      <div class="cursor-pointer" pStyleClass="@next" enterClass="hidden" enterActiveClass="fadein" leaveToClass="hidden" leaveActiveClass="fadeout" [hideOnOutsideClick]="true">-->
+<!--          <p-avatar label="{{nameLetter}}" size="large" class="noselect"></p-avatar>-->
+<!--      </div>-->
+<!--      <div class="bg-white absolute right-0 shadow-1 hidden origin-top" style="min-width: 160px; z-index: 2101;">-->
+<!--        <ul class="list-none p-0 m-0">-->
+<!--          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer" routerLink="profile">Profilis</a></li>-->
+<!--          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer" *ngIf="role == 'Admin'" routerLink="users-list">Vartotojų sąrašas</a></li>-->
+<!--          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer" (click)="onLogout()">Atsijungti</a></li>-->
+<!--        </ul>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </ng-template>-->
+<!--</p-menubar>-->
+
+<div class="header">
+  <div class="logo">
+    <a href="#">
+      <img src="assets/images/logo_fav-ic.png" alt="Logo Xplicity">
+    </a>
+  </div>
+  <div class="menu">
+    <ul class="navigation">
+      <li><a routerLink="home" routerLinkActive="active"><i class="pi pi-home"></i>&nbsp;Pagrindinis</a></li>
+      <div class="dropdown">
+        <li><a routerLink="candidate-table" routerLinkActive="active"><i class="pi pi-users"></i>&nbsp;Kandidatai&nbsp;<i class="pi pi-angle-down"></i></a></li>
+        <div class="dropdown-content">
+          <a routerLink="candidate-table" routerLinkActive="active1"><i class="pi pi-table"></i>&nbsp;Lentelė</a>
+          <a routerLink="add-candidate" routerLinkActive="active1"><i class="pi pi-plus-circle"></i>&nbsp;Pridėti naują</a>
+        </div>
+      </div>
+      <li><a routerLink="calendar" routerLinkActive="active"><i class="pi pi-calendar"></i>&nbsp;Kalendorius</a></li>
+      <li><a routerLink="clients" routerLinkActive="active"><i class="pi pi-briefcase"></i>&nbsp;Klientai</a></li>
+      <li><a routerLink="tax" routerLinkActive="active"><i class="pi pi-euro"></i>&nbsp;Atlyginimo skaičiuoklė</a></li>
+    </ul>
+  </div>
+  <div class="right-side-menu">
+
+<!--      <div class="menu-iconn" >-->
+<!--        <p-button type="text" icon="pi pi-plus" label="Show"></p-button>-->
+<!--      </div>-->
+
+    <div class="profile-iconn relative border-round-xl">
+      <div class="cursor-pointer" pStyleClass="@next" enterClass="hidden" enterActiveClass="fadein"
+           leaveToClass="hidden" leaveActiveClass="fadeout" [hideOnOutsideClick]="true">
+        <p-avatar label="{{nameLetter}}" size="large" class="noselect"></p-avatar>
+      </div>
+      <div class="bg-white absolute right-0 shadow-1 hidden origin-top" style="min-width: 160px; z-index: 9999;">
+        <ul class="list-none p-0 m-0">
+          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                 routerLink="profile">Profilis</a></li>
+          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                 *ngIf="role != 'User'" routerLink="users-list">Vartotojų sąrašas</a></li>
+          <li><a class="block p-2 no-underline text-700 hover:bg-blue-50 hover:text-blue-700 cursor-pointer"
+                 (click)="onLogout()">Atsijungti</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

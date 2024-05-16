@@ -1,0 +1,74 @@
+<p-toast></p-toast>
+
+<div class="back1 align-items-center flex justify-content-center flex-wrap w-full">
+  <div class="surface-card p-7 shadow-2 border-round md:w-5">
+    <div class="text-center">
+      <div>
+        <div class="col"><p-avatar label="{{nameLetter}}" size="xlarge" class="noselect"></p-avatar></div>
+      </div>
+      <div>
+        <h2>{{name}}</h2>
+      </div>
+      <div>
+        <h4>@{{role}} / {{email1}}</h4>
+      </div>
+      <div class="grid">
+        <div class="col mt-4"><button pButton label="Keisti el.paštą" icon="pi pi-envelope" class="p-button-warning" (click)="openNewChangeEmail()"></button></div>
+        <div class="col mt-4"><button pButton label="Keisti slaptažodį" icon="pi pi-lock" class="p-button-danger" (click)="openNewChangePass()"></button></div>
+      </div>
+      <div class="grid">
+        <div class="col"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog [(visible)]="userDialogChangePass" [style]="{width: '450px'}" header="Vartotojo slaptažodžio keitimas" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="passwordChange1">Dabartinis slaptažodis</label>
+      <p-password autocomplete="old-password" id="passwordOld1" [(ngModel)]="tempOldPassword1" [feedback]="false" [toggleMask]="true"></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempOldPassword1">Įveskite norima keisti slaptažodį!</small>
+    </div>
+    <div class="field">
+      <label for="passwordChange1">Naujas slaptažodis</label>
+      <p-password autocomplete="new-password" id="passwordChange1" [(ngModel)]="tempPass1" [feedback]="false" [toggleMask]="true"></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempPass1">Įveskite norima keisti slaptažodį!</small>
+    </div>
+    <div class="field">
+      <label for="passwordConfirm1">Slaptažodžio patvirtinimas</label>
+      <p-password autocomplete="new-password" id="passwordConfirm1" [(ngModel)]="tempPassConfirm1" [feedback]="false" [toggleMask]="true" required autofocus></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempPassConfirm1">Patvirtinkite slaptažodį!</small>
+      <small class="p-error" *ngIf="submittedPass && tempPassConfirm1 && (tempPass1 != tempPassConfirm1)">Slaptažodžiai nesutampa!</small>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialogChangePass()"></button>
+    <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="savePasswordChange1()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="userDialogChangeEmail" [style]="{width: '450px'}" header="Vartotojo el.pašto keitimas" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="field">
+      <label for="passwordChange1">Dabartinis slaptažodis</label>
+      <p-password autocomplete="old-password" id="passwordOld2" [(ngModel)]="tempOldPassword1" [feedback]="false" [toggleMask]="true"></p-password>
+      <small class="p-error" *ngIf="submittedPass && !tempOldPassword1">Įveskite norima keisti slaptažodį!</small>
+    </div>
+    <div class="field">
+      <label for="email">El.paštas</label>
+      <input type="email" pInputText id="email" [(ngModel)]="tempMail" required autofocus/>
+      <small class="p-error" *ngIf="submittedEmail && !tempMail">El.paštas privalomas</small>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="Atšaukti" icon="pi pi-times" class="p-button-text" (click)="hideDialogChangeEmail()"></button>
+    <button pButton pRipple label="Išsaugoti" icon="pi pi-check" class="p-button-text" (click)="saveEmailChange()"></button>
+  </ng-template>
+</p-dialog>
+
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
